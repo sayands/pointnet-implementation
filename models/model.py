@@ -3,16 +3,16 @@ import numpy as np
 import os 
 import sys
 sys.path.append('../')
+from utils.dataUtils import mat_mul
+
+# Importing keras and tensorflow related packages
 from keras import optimizers
 from keras.layers import * 
 from keras.models import * 
-from keras.utils.vis_utils import plot_model
 
-
-
-
-def createClassModel(NUM_POINTS, k):
+def createModel(NUM_POINTS, k):
     # PointNet Implementation
+    
     input_points = Input(shape = (NUM_POINTS, 3))
 
     # Input Transformation Net
@@ -61,21 +61,5 @@ def createClassModel(NUM_POINTS, k):
     g = Conv1D(1024, 1, activation = 'relu')(g)
     g = BatchNormalization()(g)
 
-    # Global Features
-    global_feature = MaxPool1D(pool_size = NUM_POINTS)(g)
-
-    # Classifier Net
-    c = Dense(512, activation = 'relu')(global_feature)
-    c = BatchNormalization()(c)
-    c = Dropout(rate = 0.7)(c)
-    c = Dense(256, activation = 'relu')(c)
-    c = BatchNormalization()(c)
-    c = Dropout(rate = 0.7)(c)
-    c = Dense(k, activation = 'softmax')(c)
-
-    prediction = Flatten()(c)
-
-    model = Model(inputs = input_points, outputs = prediction)
-
-    print("[INFO] Model Summary ---")
-    print(model.summary())
+    model = Model(inputs = input_points, outputs = g)
+    return model
