@@ -2,13 +2,8 @@
 from keras import optimizers
 from keras.layers import * 
 from keras.models import * 
-from model import createModel
 
-
-def createClassModel(NUM_POINTS, k):
-
-    model = createModel(NUM_POINTS, k)
-
+def createClassModel(model, NUM_POINTS, k):
     # Global Features
     global_feature = MaxPool1D(pool_size = NUM_POINTS)(model.output)
 
