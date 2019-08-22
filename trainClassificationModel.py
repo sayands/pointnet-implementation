@@ -23,7 +23,7 @@ WEIGHTS_PATH = './weights'
 if not os.path.exists(WEIGHTS_PATH):
     os.makedirs(WEIGHTS_PATH)
 
-model = createModel(num_points, k)
+model, _ = createModel(num_points, k)
 model = createClassModel(model, num_points, k)
 
 # Loading training data

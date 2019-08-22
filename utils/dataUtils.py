@@ -3,6 +3,9 @@ import tensorflow as tf
 import  h5py
 import numpy as np
 
+def exp_dim(global_feature, num_points):
+    return tf.tile(global_feature, [1, num_points, 1])
+
 def load_h5(h5_filename):
     f = h5py.File(h5_filename)
     data = f['data'][:]
@@ -46,7 +49,7 @@ def jitter_point_cloud(batch_data, sigma = 0.01, clip = 0.05):
     '''
 
     B, N, C = batch_data.shape
-    asser(clip > 0)
+    assert(clip > 0)
     jittered_data = np.clip(sigma * np.random.randn(B, N, C), -1 * clip, clip)
     jittered_data += batch_data
     return jittered_data

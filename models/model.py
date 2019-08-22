@@ -54,6 +54,8 @@ def createModel(NUM_POINTS, k):
 
     # Forward Net
     g = Lambda(mat_mul, arguments = { 'B' : feature_T})(g)
+    
+    seg_part1 = g
     g = Conv1D(64, 1, activation = 'relu')(g)
     g = BatchNormalization()(g)
     g = Conv1D(128, 1, activation = 'relu')(g)
@@ -62,4 +64,4 @@ def createModel(NUM_POINTS, k):
     g = BatchNormalization()(g)
 
     model = Model(inputs = input_points, outputs = g)
-    return model
+    return model, seg_part1
