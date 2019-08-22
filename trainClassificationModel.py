@@ -9,6 +9,8 @@ import tensorflow as tf
 from models.classModel import createClassModel
 from models.model import createModel
 from utils.dataUtils import load_h5, rotate_point_cloud, jitter_point_cloud
+
+
 # Parameters
 num_points = 2048
 k = 40
@@ -52,8 +54,7 @@ train_points_r = train_points.reshape(-1, num_points, 3)
 train_labels_r = train_labels.reshape(-1, 1)
 
 # Loading testing data
-path = os.path.dirname(os.path.realpath(__file__))
-test_path = os.path.join(path, "data", "PrepTrainData")
+test_path = os.path.join(path, "data", "PrepTestData")
 filenames = [d for d in os.listdir(test_path)]
 
 print("Path For Testing Data ", test_path)
@@ -92,10 +93,9 @@ model.compile(optimizer = optimizer, loss = 'categorical_crossentropy', metrics 
 callbacks = [
             keras.callbacks.TensorBoard(log_dir='./logs',
                                         histogram_freq=0, write_graph=True, write_images=False),
-             keras.callbacks.ModelCheckpoint(os.path.join(WEIGHT_SAVE_PATH, 'weights{epoch:08d}.h5'),
+             keras.callbacks.ModelCheckpoint(os.path.join(WEIGHTS_PATH, 'weights{epoch:08d}.h5'),
                                     verbose=0, save_weights_only=True)]
 # Training Model 
-model.fit(train_points_jitter, train_labels_r, batch_size = BATCH_SIZE, 
-                epochs = EPOCHS, verbose = 1, validation_data = (test_points_r, test_labels_r), 
+model.fit(train_points_jitter, y_train, batch_size = BATCH_SIZE, 
+                epochs = EPOCHS, verbose = 1, validation_data = (test_points_r, y_test), 
                 callbacks = callbacks)
-

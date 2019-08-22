@@ -2,6 +2,14 @@
 import tensorflow as tf 
 import  h5py
 import numpy as np
+
+def load_h5(h5_filename):
+    f = h5py.File(h5_filename)
+    data = f['data'][:]
+    label = f['label'][:]
+
+    return data, label
+
 def mat_mul(A, B):
     return tf.matmul(A, B)
 
