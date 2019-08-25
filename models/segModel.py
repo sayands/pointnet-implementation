@@ -13,16 +13,16 @@ def createSegModel(model, seg_part1, NUM_POINTS, k):
 
     # PointNet Segmentation Network
     c = concatenate([seg_part1, global_feature])
-    c = Conv1D(512, 1, activation = 'relu')(c)
+    c = Conv1D(512, 1, activation = 'relu', kernel_initializer='he_normal')(c)
     c = BatchNormalization()(c)
-    c = Conv1D(256, 1, activation = 'relu')(c)
+    c = Conv1D(256, 1, activation = 'relu', kernel_initializer='he_normal')(c)
     c = BatchNormalization()(c)
-    c = Conv1D(128, 1, activation = 'relu')(c)
+    c = Conv1D(128, 1, activation = 'relu', kernel_initializer='he_normal')(c)
     c = BatchNormalization()(c)
-    c = Conv1D(128, 1, activation = 'relu')(c)
+    c = Conv1D(128, 1, activation = 'relu', kernel_initializer='he_normal')(c)
     c = BatchNormalization()(c)
 
-    prediction = Conv1D(k, 1, activation = 'softmax')(c)
+    prediction = Conv1D(k, 1, activation = 'softmax', kernel_initializer='he_normal')(c)
     # Creating Model
     model = Model(inputs = model.input, outputs = prediction)
 

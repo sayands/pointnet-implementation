@@ -8,15 +8,15 @@ def createClassModel(model, NUM_POINTS, k):
     global_feature = MaxPool1D(pool_size = NUM_POINTS)(model.output)
 
     # Classifier Net
-    c = Dense(512, activation = 'relu')(global_feature)
+    c = Dense(512, activation = 'relu', kernel_initializer='he_normal')(global_feature)
     c = BatchNormalization()(c)
     c = Dropout(rate = 0.7)(c)
-    c = Dense(256, activation = 'relu')(c)
+    c = Dense(256, activation = 'relu', kernel_initializer='he_normal')(c)
     c = BatchNormalization()(c)
     c = Dropout(rate = 0.7)(c)
 
     # Output Classification Layer
-    c = Dense(k, activation = 'softmax')(c)
+    c = Dense(k, activation = 'softmax', kernel_initializer='he_normal')(c)
     prediction = Flatten()(c)
 
     # Creating Model
