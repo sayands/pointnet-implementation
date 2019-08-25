@@ -1,3 +1,4 @@
+# Importing neccessary packages and libraries
 import numpy as np 
 import os 
 import keras 
@@ -6,15 +7,18 @@ from keras.optimizers import *
 import h5py
 import tensorflow as tf 
 
+# Importing user-defined packages and 
 from models.classModel import createClassModel
 from models.model import createModel
 from utils.dataUtils import load_h5, rotate_point_cloud, jitter_point_cloud
+from utils.messageUtils import send_notification
+from utils.notify import Notify
 
 
 # Parameters
 num_points = 2048
 k = 40
-LEARNING_RATE = 1e-1
+LEARNING_RATE = 1e-3
 BATCH_SIZE = 32
 EPOCHS = 50
 WEIGHTS_PATH = './cls_weights'
@@ -25,6 +29,7 @@ if not os.path.exists(WEIGHTS_PATH):
 
 model, _ = createModel(num_points, k)
 model = createClassModel(model, num_points, k)
+print('[INFO] Loaded Model...')
 
 # Loading training data
 path = os.path.dirname(os.path.realpath(__file__))
@@ -53,6 +58,8 @@ for d in filenames :
 train_points_r = train_points.reshape(-1, num_points, 3)
 train_labels_r = train_labels.reshape(-1, 1)
 
+print("[INFO] Loaded Training Data...")
+
 # Loading testing data
 test_path = os.path.join(path, "data", "PrepTestData")
 filenames = [d for d in os.listdir(test_path)]
@@ -79,6 +86,8 @@ for d in filenames :
 test_points_r = test_points.reshape(-1, num_points, 3)
 test_labels_r = test_labels.reshape(-1, 1)
 
+print("[INFO] Loaded Testing Data...")
+
 # Change labels to categorical values for Keras
 y_train = np_utils.to_categorical(train_labels_r, k)
 y_test = np_utils.to_categorical(test_labels_r, k)
@@ -86,15 +95,19 @@ y_test = np_utils.to_categorical(test_labels_r, k)
 train_points_rotate = rotate_point_cloud(train_points_r)
 train_points_jitter = jitter_point_cloud(train_points_rotate)
 
+print("[INFO] Rotated and Jittered Point Clouds")
+
 # Compiling Model
 optimizer = Adam(lr = LEARNING_RATE)
 model.compile(optimizer = optimizer, loss = 'categorical_crossentropy', metrics = ['accuracy'])
 
+notifyCB = Notify()
 callbacks = [
             keras.callbacks.TensorBoard(log_dir='./logs',
                                         histogram_freq=0, write_graph=True, write_images=False),
-             keras.callbacks.ModelCheckpoint(os.path.join(WEIGHTS_PATH, 'weights{epoch:08d}.h5'),
-                                    verbose=0, save_weights_only=True)]
+            keras.callbacks.ModelCheckpoint(os.path.join(WEIGHTS_PATH, 'weights{epoch:08d}.h5'),
+                                    verbose=0, save_weights_only=True),
+            notifyCB]
 # Training Model 
 model.fit(train_points_jitter, y_train, batch_size = BATCH_SIZE, 
                 epochs = EPOCHS, verbose = 1, validation_data = (test_points_r, y_test), 
